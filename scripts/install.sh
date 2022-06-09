@@ -15,7 +15,7 @@ verify_ready()
 link_extension()
 {
     echo "Linking extension to Klipper..."
-    ln -sf "${SRCDIR}/probe_z_offset_calibrate.py" "${KLIPPER_PATH}/klippy/extras/probe_z_offset_calibrate.py"
+    ln -sf "${SRCDIR}/probe_z_calibrate.py" "${KLIPPER_PATH}/klippy/extras/probe_z_calibrate.py"
 }
 
 # restarting Klipper

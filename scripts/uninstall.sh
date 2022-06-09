@@ -15,7 +15,7 @@ verify_ready()
 unlink_extension()
 {
     echo "Unlinking extension to Klipper..."
-    rm "${KLIPPER_PATH}/klippy/extras/probe_z_offset_calibrate.py"
+    rm "${KLIPPER_PATH}/klippy/extras/probe_z_calibrate.py"
 }
 
 # restarting Klipper
