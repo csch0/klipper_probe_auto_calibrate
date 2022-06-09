@@ -1,5 +1,6 @@
 #!/bin/bash
 KLIPPER_PATH="${HOME}/klipper"
+KLIPPER_EXTENSION_PATH="${HOME}/klipper_probe_z_calibrate"
 SYSTEMDDIR="/etc/systemd/system"
 
 # helper functions
@@ -15,7 +16,7 @@ verify_ready()
 link_extension()
 {
     echo "Linking extension to Klipper..."
-    ln -sf "${SRCDIR}/probe_z_calibrate.py" "${KLIPPER_PATH}/klippy/extras/probe_z_calibrate.py"
+    ln -sf "${KLIPPER_EXTENSION_PATH}/probe_z_calibrate.py" "${KLIPPER_PATH}/klippy/extras/probe_z_calibrate.py"
 }
 
 # restarting Klipper
@@ -27,9 +28,6 @@ restart_klipper()
 
 # Force script to exit if an error occurs
 set -e
-
-# Find SRCDIR from the pathname of this script
-SRCDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/ && pwd )"
 
 # Parse command line arguments
 while getopts "k:" arg; do
