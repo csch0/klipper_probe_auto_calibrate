@@ -1,6 +1,6 @@
 #!/bin/bash
 KLIPPER_PATH="${HOME}/klipper"
-KLIPPER_EXTENSION_PATH="${HOME}/klipper_probe_z_calibrate"
+KLIPPER_EXTENSION_PATH="${HOME}/klipper_probe_auto_calibrate"
 SYSTEMDDIR="/etc/systemd/system"
 
 # helper functions
@@ -16,7 +16,7 @@ verify_ready()
 link_extension()
 {
     echo "Linking extension to Klipper..."
-    ln -sf "${KLIPPER_EXTENSION_PATH}/probe_z_calibrate.py" "${KLIPPER_PATH}/klippy/extras/probe_z_calibrate.py"
+    ln -sf "${KLIPPER_EXTENSION_PATH}/probe_auto_calibrate.py" "${KLIPPER_PATH}/klippy/extras/probe_auto_calibrate.py"
 }
 
 # restarting Klipper

@@ -32,17 +32,12 @@ class ProbeZCalibrate:
 
         # register command
         self.gcode = self.printer.lookup_object('gcode')
-        self.gcode.register_command('PROBE_Z_CALIBRATE',
-                                    self.cmd_PROBE_Z_CALIBRATE, desc="Automatically calibrates the probe offset")
+        self.gcode.register_command('PROBE_AUTO_CALIBRATE', self.cmd_PROBE_AUTO_CALIBRATE,
+                                    desc=self.cmd_PROBE_AUTO_CALIBRATE_help)
 
-        self.printer.register_event_handler('klippy:connect',
-                                            self._handle_connect)
-
-        self.printer.register_event_handler('klippy:mcu_identify',
-                                            self._handle_mcu_identify)
-
-        self.printer.register_event_handler("homing:home_rails_end",
-                                            self.handle_home_rails_end)
+        self.printer.register_event_handler('klippy:connect', self._handle_connect)
+        self.printer.register_event_handler('klippy:mcu_identify',self._handle_mcu_identify)
+        self.printer.register_event_handler("homing:home_rails_end", self.handle_home_rails_end)
 
     def _handle_connect(self):
         probe = self.printer.lookup_object('probe', default=None)
@@ -68,7 +63,8 @@ class ProbeZCalibrate:
             if rail.get_steppers()[0].is_active_axis('z'):
                 # use the values as the z axis
                 self.probing_speed = rail.homing_speed
-                self.second_probing_speed = rail.second_homing_speed
+                self.second_probing_spe
+                ed = rail.second_homing_speed
                 self.probing_retract_dist = rail.homing_retract_dist
                 self.position_min = rail.position_min
 
@@ -104,7 +100,7 @@ class ProbeZCalibrate:
 
         # retract
         self._move_to([None, None, current_pos[2] +
-                      self.probing_retract_dist], self.lift_speed)
+                       self.probing_retract_dist], self.lift_speed)
 
         self.gcode.respond_info("probe at %.3f,%.3f is z=%.6f"
                                 % (current_pos[0], current_pos[1], current_pos[2]))
@@ -119,9 +115,7 @@ class ProbeZCalibrate:
             self._move_to([None, None, self.clearance], self.lift_speed)
 
         # move to probing location
-        self._move_to(list(position), self.speed)
-
-        print(self.samples_tolerance, self.samples_tolerance_retries)
+        self._move_to(position, self.speed)
 
         # probe at location
         retries = 0
@@ -129,7 +123,6 @@ class ProbeZCalibrate:
         while len(z_positions) < self.samples:
             z_position = self._probe()
             z_positions += [z_position]
-            print(z_position, z_positions)
             if max(z_positions) - min(z_positions) > self.samples_tolerance:
                 if retries >= self.samples_tolerance_retries:
                     raise self.gcode.error("Probe samples exceed tolerance")
@@ -146,7 +139,9 @@ class ProbeZCalibrate:
         toolhead = self.printer.lookup_object('toolhead')
         toolhead.manual_move(coordinate, speed)
 
-    def cmd_PROBE_Z_CALIBRATE(self, gcmd):
+    cmd_PROBE_AUTO_CALIBRATE_help = "Calibrate the probe's z_offset automatically"
+
+    def cmd_PROBE_AUTO_CALIBRATE(self, gcmd):
         self.start_gcode.run_gcode_from_command()
 
         retries = 0
@@ -178,7 +173,8 @@ class ProbeZCalibrate:
             z_offset = self._calc_mean(z_offsets)
 
         # print result
-        self.gcode.respond_info("PROBE_Z_CALIBRATE: Z_OFFSET=%.6f" % z_offset)
+        self.gcode.respond_info(
+            "PROBE_AUTO_CALIBRATE: Z_OFFSET=%.6f" % z_offset)
 
         self.end_gcode.run_gcode_from_command()
 

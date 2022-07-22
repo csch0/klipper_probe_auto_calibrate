@@ -1,1 +1,1 @@
-# Klipper plugin for calibrating probe Z offset
+# Klipper plugin for auto calibrating probe offset
