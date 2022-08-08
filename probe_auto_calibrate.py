@@ -35,9 +35,12 @@ class ProbeZCalibrate:
         self.gcode.register_command('PROBE_AUTO_CALIBRATE', self.cmd_PROBE_AUTO_CALIBRATE,
                                     desc=self.cmd_PROBE_AUTO_CALIBRATE_help)
 
-        self.printer.register_event_handler('klippy:connect', self._handle_connect)
-        self.printer.register_event_handler('klippy:mcu_identify',self._handle_mcu_identify)
-        self.printer.register_event_handler("homing:home_rails_end", self.handle_home_rails_end)
+        self.printer.register_event_handler(
+            'klippy:connect', self._handle_connect)
+        self.printer.register_event_handler(
+            'klippy:mcu_identify', self._handle_mcu_identify)
+        self.printer.register_event_handler(
+            "homing:home_rails_end", self.handle_home_rails_end)
 
     def _handle_connect(self):
         probe = self.printer.lookup_object('probe', default=None)
