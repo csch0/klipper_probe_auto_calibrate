@@ -63,8 +63,7 @@ class ProbeZCalibrate:
             if rail.get_steppers()[0].is_active_axis('z'):
                 # use the values as the z axis
                 self.probing_speed = rail.homing_speed
-                self.second_probing_spe
-                ed = rail.second_homing_speed
+                self.second_probing_speed = rail.second_homing_speed
                 self.probing_retract_dist = rail.homing_retract_dist
                 self.position_min = rail.position_min
 
