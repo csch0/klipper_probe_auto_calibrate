@@ -8,7 +8,7 @@ import logging
 from mcu import MCU_endstop
 
 
-class ProbeZCalibrate:
+class ProbeAutoCalibrate:
     def __init__(self, config):
         self.config = config
         self.printer = config.get_printer()
@@ -89,7 +89,7 @@ class ProbeZCalibrate:
             raise self.config.error("Unable to parse %s in %s"
                                     % (name, self.config.get_name()))
 
-    def _probe(self):
+    def _probe(self, first):
         toolhead = self.printer.lookup_object('toolhead')
 
         # set position_min
@@ -98,7 +98,7 @@ class ProbeZCalibrate:
 
         homing = self.printer.lookup_object('homing')
         current_pos = homing.probing_move(
-            self.mcu_endstop, probing_pos, self.probing_speed)
+            self.mcu_endstop, probing_pos, self.probing_speed if first else self.second_probing_speed)
 
         # retract
         self._move_to([None, None, current_pos[2] +
@@ -116,14 +116,15 @@ class ProbeZCalibrate:
         if current_pos[2] < self.clearance:
             self._move_to([None, None, self.clearance], self.lift_speed)
 
-        # move to probing location
+        # move to probing location and probe the first time
         self._move_to(position, self.speed)
+        self._probe(True)
 
         # probe at location
         retries = 0
         z_positions = []
         while len(z_positions) < self.samples:
-            z_position = self._probe()
+            z_position = self._probe(False)
             z_positions += [z_position]
             if max(z_positions) - min(z_positions) > self.samples_tolerance:
                 if retries >= self.samples_tolerance_retries:
@@ -189,4 +190,4 @@ class ProbeZCalibrate:
 
 
 def load_config(config):
-    return ProbeZCalibrate(config)
+    return ProbeAutoCalibrate(config)
